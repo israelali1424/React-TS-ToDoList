@@ -50,7 +50,7 @@
   flex-direction: column;
   width: 47.5%;
   padding: 15px;
-  background-color: rgb(50, 195, 205);
+  /* background-color: rgb(50, 195, 205); */
 }
 
 .dragactive {
@@ -111,6 +111,12 @@
     width: 45%;
   }
 }
+/* Does noting  */
+/* @media (max-width: 1200px) {
+  .todos__single {
+    width: 40%;
+  }
+} */
 
 @media (max-width: 700px) {
   .input {

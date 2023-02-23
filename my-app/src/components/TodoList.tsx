@@ -16,7 +16,6 @@ const TodoList: React.FC<Props> = ({ todos, setTodos }: Props) => {
           todos={todos}
           setTodos={setTodos}
         />
-        // <li>{todo.todo}</li>
       ))}
     </div>
   );
