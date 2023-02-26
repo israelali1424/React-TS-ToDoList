@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Todo } from './model';
 import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import { MdDone } from 'react-icons/md';
@@ -9,6 +9,12 @@ export interface Props {
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 const SingleTodo = ({ todo, todos, setTodos }: Props) => {
+  const [edit, setEdit] = useState<boolean>(false);
+  const [editTodo, setEditTodo] = useState<string>(todo.todo);
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [edit]);
   // if the todo form the para matches the current todo set the done status
   // to the opposite of what was before else just return the todo
   const handleDone = (id: number) => {
@@ -18,28 +24,45 @@ const SingleTodo = ({ todo, todos, setTodos }: Props) => {
       )
     );
   };
-  /* Handle done being set up 
-  function handleDone(id: number): void {
+  const handleDelete = (id: number) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+  const handleEdit = (e: React.FormEvent, id: number) => {
+    e.preventDefault();
     setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
-      )
+      todos.map((todo) => (todo.id === id ? { ...todo, todo: editTodo } : todo))
     );
-  }
-  */
+    setEdit(false);
+  };
   return (
-    <form className="todos__single">
-      {todo.isDone ? (
-      // s is the strike tag 
+    <form className="todos__single" onSubmit={(e) => handleEdit(e, todo.id)}>
+      {edit ? (
+        <input
+          ref={inputRef}
+          value={editTodo}
+          onChange={(e) => setEditTodo(e.target.value)}
+          className="todos__single--text"
+        />
+      ) : todo.isDone ? (
+        // s is the strike tag
         <s className="todos__single--text">{todo.todo}</s>
       ) : (
         <span className="todos__single--text">{todo.todo}</span>
       )}
       <div>
-        <span className="icon">
+        <span
+          className="icon"
+          onClick={(e) => {
+            if (!edit && !todo.isDone) {
+              setEdit(!edit);
+            } else{
+              handleEdit(e, todo.id)
+            }
+          }}
+        >
           <AiFillEdit />
         </span>
-        <span className="icon">
+        <span className="icon" onClick={() => handleDelete(todo.id)}>
           <AiFillDelete />
         </span>
         <span className="icon" onClick={() => handleDone(todo.id)}>
@@ -51,3 +74,13 @@ const SingleTodo = ({ todo, todos, setTodos }: Props) => {
 };
 
 export default SingleTodo;
+
+/* Handle done as a regulat function 
+  function handleDone(id: number): void {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
+      )
+    );
+  }
+  */
