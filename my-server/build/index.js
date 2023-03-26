@@ -38,53 +38,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var mongoose_1 = __importDefault(require("mongoose"));
-//import Router from '../src/routes/routes';
 var routes_1 = __importDefault(require("./routes/routes"));
-// seting up the process.env so the mongo connection string can be imported from .env
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
-// gets all routes for homepage etc
 app.use('/', routes_1.default);
-//  set up mongo sign credentials
-var uri = process.env.ATLAS_URI;
-//await mongoose.createConnection(uri).asPromise();
-var connectionCreate = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var bar;
+// Get the MongoDB connection URI from the environment variables
+var uri = (_a = process.env.ATLAS_URI) !== null && _a !== void 0 ? _a : '';
+// Use mongoose to create a connection to the MongoDB Atlas cluster
+// Use mongoose to create a connection to the MongoDB Atlas cluster
+var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, mongoose_1.default.createConnection(uri).asPromise()];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                mongoose_1.default.set('strictQuery', false);
+                return [4 /*yield*/, mongoose_1.default.connect(uri, {
+                        useNewUrlParser: true,
+                        useUnifiedTopology: true
+                    })];
             case 1:
-                bar = _a.sent();
-                return [2 /*return*/];
+                _a.sent();
+                console.log('MongoDB running');
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                console.log(err_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
-// connect to MongoDb
-var db = mongoose_1.default.connection;
-db.once('open', function () {
-    console.log('MongoDB running');
-}).on('error', function (err) {
-    console.log(err);
-});
-app.listen(5000, function () {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            console.log('Server started on port 5000');
-            return [2 /*return*/];
-        });
-    });
-});
-// error handler
+// Error handler middleware
 app.use(function (err, req, res, next) {
-    // set locals, only providing error in development
+    // Set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
-    // render the error page
+    // Render the error page
     res.status(err.status || 500);
     res.render('error');
 });
+// Call the connectToDatabase function and wait for it to resolve before starting the server
+connectToDatabase().then(function () {
+    app.listen(5000, function () {
+        console.log('Server started on port 5000');
+    });
+});
+// import Router from './routes/routes'
+//const uri = process.env.ATLAS_URI ?? '';
