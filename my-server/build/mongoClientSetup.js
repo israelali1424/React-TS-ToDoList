@@ -38,54 +38,52 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a;
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var mongoose_1 = __importDefault(require("mongoose"));
 var routes_1 = __importDefault(require("./routes/routes"));
+var mongodb_1 = require("mongodb");
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-// This file show up to set up a mongobd database connection using mongoose
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use('/', routes_1.default);
-var uri = (_a = process.env.ATLAS_URI) !== null && _a !== void 0 ? _a : '';
-// Use mongoose to create a connection to the MongoDB Atlas cluster
+// This how to set up a mongo db database connection using the MongoClient
+//Get the MongoDB connection URI and port from the environment variables
+var MONGODB_URI = (_a = process.env.ATLAS_URI) !== null && _a !== void 0 ? _a : '';
+var PORT = (_b = process.env.PORT) !== null && _b !== void 0 ? _b : '';
 var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var err_1;
+    var client, db, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                mongoose_1.default.set('strictQuery', false);
-                return [4 /*yield*/, mongoose_1.default.connect(uri, {
-                        useNewUrlParser: true,
-                        useUnifiedTopology: true,
-                    })];
+                if (!MONGODB_URI)
+                    throw new Error('Missing MongoDB connection string');
+                return [4 /*yield*/, mongodb_1.MongoClient.connect(MONGODB_URI)];
             case 1:
-                _a.sent();
-                console.log('MongoDB running');
+                client = _a.sent();
+                console.log('MongoDB connection has been established');
+                db = client.db();
+                // if the database connection fails,
+                //the connectToDatabase function will log the error message and throw the error
+                client.close();
                 return [3 /*break*/, 3];
             case 2:
-                err_1 = _a.sent();
-                console.log(err_1);
-                return [3 /*break*/, 3];
+                error_1 = _a.sent();
+                console.error('MongoDB connection failed:', error_1.message);
+                throw error_1;
             case 3: return [2 /*return*/];
         }
     });
 }); };
-// Error handler middleware
-app.use(function (err, req, res, next) {
-    // Set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-    // Render the error page
-    res.status(err.status || 500);
-    res.render('error');
-});
 // Call the connectToDatabase function and wait for it to resolve before starting the server
-connectToDatabase().then(function () {
-    app.listen(5000, function () {
-        console.log('Server started on port 5000');
+connectToDatabase()
+    .then(function () {
+    app.listen(PORT, function () {
+        console.log("Server started on port ".concat(PORT));
     });
+})
+    .catch(function (error) {
+    console.error('Failed to start server:', error.message);
 });
