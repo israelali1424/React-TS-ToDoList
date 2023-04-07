@@ -1,8 +1,9 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import Router from './routes/routes';
 import dotenv from 'dotenv';
 dotenv.config();
+import SingleTodo from './models/SingeTodo';
 // This file show up to set up a mongobd database connection using mongoose
 const app = express();
 app.use(express.json());
@@ -33,9 +34,18 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.render('error');
 });
 
-// Call the connectToDatabase function and wait for it to resolve before starting the server
-connectToDatabase().then(() => {
-  app.listen(5000, () => {
-    console.log('Server started on port 5000');
-  });
-});
+//Call the connectToDatabase function and wait for it to resolve before starting the server
+// connectToDatabase().then(() => {
+//   app.listen(5000, () => {
+//     console.log('Server started on port 5000');
+//   });
+//   const article = await SingleTodo.create({
+//     todo: 'Please Work',
+//     isDone: false,
+//   });
+// });
+
+// // // Create a new blog post object
+
+// // Insert the article in our MongoDB database
+// await article.save();

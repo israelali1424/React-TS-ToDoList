@@ -7,7 +7,7 @@ import TodoList from './components/TodoList';
 const App: React.FC = () => {
   const [todo, setTodo] = useState<string>('');
   const [todos, setTodos] = useState<Todo[]>([]);
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (todo) {
       // ...allTodoso : is what is already  in the todo allTodoso list,
@@ -15,6 +15,7 @@ const App: React.FC = () => {
       setTodos([...todos, { id: Date.now(), todo: todo, isDone: false }]);
       setTodo('');
     }
+    
     console.log(todos);
   };
   return (

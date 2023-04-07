@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
-const Schema = mongoose.Schema;
+const { Schema, model } = mongoose;
+//const Schema = mongoose.Schema;
 
-const singleTodoScheme = new Schema(
+const singleTodoSchema = new Schema(
   {
     todo: { type: String, required: true, trim: true },
     id: { type: Number, required: true, trim: true },
@@ -12,6 +13,7 @@ const singleTodoScheme = new Schema(
   }
 );
 
-const SingleTodo = mongoose.model('User', singleTodoScheme);
+//const SingleTodo = mongoose.model('User', singleTodoScheme);
+const SingleTodo = model('Blog', singleTodoSchema);
 
 export default SingleTodo;

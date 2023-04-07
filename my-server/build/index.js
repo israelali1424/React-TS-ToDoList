@@ -89,3 +89,10 @@ connectToDatabase().then(function () {
         console.log('Server started on port 5000');
     });
 });
+// // Create a new blog post object
+// const article = new SingleTodo({
+//   todo:"Please Work",
+//   isDone: false
+// });
+// // Insert the article in our MongoDB database
+// await article.save();

@@ -1,5 +1,5 @@
 import express from 'express';
-import SingleTodo from '../models/SingeTdo';
+import SingleTodo from '../models/SingeTodo';
 const router = express.Router();
 router.use(express.json());
 router.get('/', function (req, res) {
@@ -9,7 +9,6 @@ router.get('/', function (req, res) {
 router.get('/h', function (req, res) {
   res.send('<h1>You are fake</h1>');
 });
-
 
 router.route('/').post(async (req, res) => {
   try {

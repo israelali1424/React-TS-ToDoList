@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var SingeTdo_1 = __importDefault(require("../models/SingeTdo"));
+var SingeTodo_1 = __importDefault(require("../models/SingeTodo"));
 var router = express_1.default.Router();
 router.use(express_1.default.json());
 router.get('/', function (req, res) {
@@ -58,7 +58,7 @@ router.route('/').post(function (req, res) { return __awaiter(void 0, void 0, vo
                 todo = req.body.todo;
                 id = req.body.id;
                 isDone = req.body.isDone;
-                newSingleToDo = new SingeTdo_1.default({ todo: todo, id: id, isDone: isDone });
+                newSingleToDo = new SingeTodo_1.default({ todo: todo, id: id, isDone: isDone });
                 return [4 /*yield*/, newSingleToDo.save()];
             case 1:
                 _a.sent();
