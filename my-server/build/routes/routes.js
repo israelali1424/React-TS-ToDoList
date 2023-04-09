@@ -44,28 +44,27 @@ var SingeTodo_1 = __importDefault(require("../models/SingeTodo"));
 var router = express_1.default.Router();
 router.use(express_1.default.json());
 router.get('/', function (req, res) {
-    res.send('<h1>Israel is the Great</h1>');
+    res.send('<h1>Israel is is the best</h1>');
 });
 router.get('/h', function (req, res) {
     res.send('<h1>You are fake</h1>');
 });
 router.route('/').post(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var todo, id, isDone, newSingleToDo, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, todo, id, isDone, newSingleToDo, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                todo = req.body.todo;
-                id = req.body.id;
-                isDone = req.body.isDone;
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, todo = _a.todo, id = _a.id, isDone = _a.isDone;
                 newSingleToDo = new SingeTodo_1.default({ todo: todo, id: id, isDone: isDone });
                 return [4 /*yield*/, newSingleToDo.save()];
             case 1:
-                _a.sent();
+                _b.sent();
                 res.json('new Single To Do added!');
                 return [3 /*break*/, 3];
             case 2:
-                error_1 = _a.sent();
+                error_1 = _b.sent();
+                console.log('There is an error');
                 console.error(error_1);
                 res.status(500).send();
                 return [3 /*break*/, 3];

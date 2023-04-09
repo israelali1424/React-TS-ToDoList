@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
-//const Schema = mongoose.Schema;
 
+//todo schema
 const singleTodoSchema = new Schema(
   {
     todo: { type: String, required: true, trim: true },
@@ -12,8 +12,7 @@ const singleTodoSchema = new Schema(
     timestamps: true,
   }
 );
-
-//const SingleTodo = mongoose.model('User', singleTodoScheme);
-const SingleTodo = model('Blog', singleTodoSchema);
+// todos is the name of the collection for the schemas
+const SingleTodo = model('Todos', singleTodoSchema);
 
 export default SingleTodo;

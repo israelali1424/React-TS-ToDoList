@@ -38,18 +38,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var routes_1 = __importDefault(require("./routes/routes"));
 var dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-// This file show up to set up a mongobd database connection using mongoose
+var uri = process.env.ATLAS_URI;
+var port = process.env.PORT;
+var host = process.env.HOST;
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', host);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
 app.use('/', routes_1.default);
-var uri = (_a = process.env.ATLAS_URI) !== null && _a !== void 0 ? _a : '';
 // Use mongoose to create a connection to the MongoDB Atlas cluster
 var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, function () {
     var err_1;
@@ -74,25 +81,9 @@ var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-// Error handler middleware
-app.use(function (err, req, res, next) {
-    // Set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-    // Render the error page
-    res.status(err.status || 500);
-    res.render('error');
-});
 // Call the connectToDatabase function and wait for it to resolve before starting the server
 connectToDatabase().then(function () {
-    app.listen(5000, function () {
-        console.log('Server started on port 5000');
+    app.listen(port, function () {
+        console.log("Server started on port ".concat(port, " Now"));
     });
 });
-// // Create a new blog post object
-// const article = new SingleTodo({
-//   todo:"Please Work",
-//   isDone: false
-// });
-// // Insert the article in our MongoDB database
-// await article.save();

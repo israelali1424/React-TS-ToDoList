@@ -3,12 +3,22 @@ import mongoose, { Schema } from 'mongoose';
 import Router from './routes/routes';
 import dotenv from 'dotenv';
 dotenv.config();
-import SingleTodo from './models/SingeTodo';
-// This file show up to set up a mongobd database connection using mongoose
+const uri = process.env.ATLAS_URI as string;
+const port = process.env.PORT as string;
+const host = process.env.HOST as string;
 const app = express();
 app.use(express.json());
+//  setup for Cros for axios api request 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', host);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 app.use('/', Router);
-const uri = process.env.ATLAS_URI ?? '';
+
 // Use mongoose to create a connection to the MongoDB Atlas cluster
 const connectToDatabase = async () => {
   try {
@@ -23,29 +33,9 @@ const connectToDatabase = async () => {
   }
 };
 
-// Error handler middleware
-app.use((err: any, req: any, res: any, next: any) => {
-  // Set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // Render the error page
-  res.status(err.status || 500);
-  res.render('error');
+// Call the connectToDatabase function and wait for it to resolve before starting the server
+connectToDatabase().then(() => {
+  app.listen(port, () => {
+    console.log(`Server started on port ${port} Now`);
+  });
 });
-
-//Call the connectToDatabase function and wait for it to resolve before starting the server
-// connectToDatabase().then(() => {
-//   app.listen(5000, () => {
-//     console.log('Server started on port 5000');
-//   });
-//   const article = await SingleTodo.create({
-//     todo: 'Please Work',
-//     isDone: false,
-//   });
-// });
-
-// // // Create a new blog post object
-
-// // Insert the article in our MongoDB database
-// await article.save();

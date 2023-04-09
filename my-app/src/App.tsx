@@ -3,20 +3,31 @@ import './App.css';
 import InputField from './components/InputField';
 import { Todo } from './components/model';
 import TodoList from './components/TodoList';
-
+import axios from 'axios';
 const App: React.FC = () => {
   const [todo, setTodo] = useState<string>('');
   const [todos, setTodos] = useState<Todo[]>([]);
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (todo) {
-      // ...allTodoso : is what is already  in the todo allTodoso list,
-      // part after comma add a new todo to the list
-      setTodos([...todos, { id: Date.now(), todo: todo, isDone: false }]);
+    if (!todo) return;
+    try {
+      const newTodo = {
+        id: Date.now(),
+        todo: todo,
+        isDone: false,
+      };
+      // send post request to database create a new todo 
+      const response = await axios.post('http://localhost:5000', newTodo);
+      console.log(response.data);
+      console.log(newTodo);
+      // Update the local todos state
+      setTodos([...todos, newTodo]);
+    } catch (error) {
+      console.error('Error adding todo:', error);
+    } finally {
+      // Clear the input field
       setTodo('');
     }
-    
-    console.log(todos);
   };
   return (
     <div className="App">

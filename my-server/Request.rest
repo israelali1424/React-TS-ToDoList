@@ -3,8 +3,8 @@ POSt http://localhost:5000 HTTP/1.1
 content-type: application/json
 
 {
-  "todo":"Fold Clothes",
-   "id": 5,
+  "todo":"Work",
+   "id": 6,
    "isDone": false
 
 }
