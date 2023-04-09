@@ -39,16 +39,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAllRecords = void 0;
 var express_1 = __importDefault(require("express"));
 var SingeTodo_1 = __importDefault(require("../models/SingeTodo"));
+var mongoose_1 = __importDefault(require("mongoose"));
+var dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 var router = express_1.default.Router();
 router.use(express_1.default.json());
+var mydb = process.env.DB;
+var todo_collection = process.env.TODO_COLLECTION;
 router.get('/', function (req, res) {
-    res.send('<h1>Israel is is the best</h1>');
+    res.send('<h1>Israel is the best</h1>');
 });
 router.get('/h', function (req, res) {
     res.send('<h1>You are fake</h1>');
 });
+// add a new todo to the database
 router.route('/').post(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, todo, id, isDone, newSingleToDo, error_1;
     return __generator(this, function (_b) {
@@ -69,6 +76,139 @@ router.route('/').post(function (req, res) { return __awaiter(void 0, void 0, vo
                 res.status(500).send();
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
+        }
+    });
+}); });
+// Get all records from the database
+router.get('/allTodos', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, getAllRecords(mydb, todo_collection)];
+            case 1:
+                result = _a.sent();
+                res.json(result);
+                return [2 /*return*/];
+        }
+    });
+}); });
+// delete a todo Item
+router.delete('/delete/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, result, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = Number(req.params.id);
+                // Check if the input value for "id" is a valid number
+                if (isNaN(id)) {
+                    res.status(400).json({ message: 'Invalid input for ID parameter' });
+                    return [2 /*return*/];
+                }
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, SingeTodo_1.default.deleteOne({ id: id })];
+            case 2:
+                result = _a.sent();
+                if (result.deletedCount === 1) {
+                    res.status(200).json({ message: "Todo item with ID ".concat(id, " deleted successfully") });
+                }
+                else {
+                    res.status(404).json({ message: "Todo item with ID ".concat(id, " not found") });
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _a.sent();
+                console.error(error_2);
+                res.status(500).send();
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+// Define the getAllRecords function
+function getAllRecords(databaseName, collectionName) {
+    return __awaiter(this, void 0, void 0, function () {
+        var db, result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("Getting all records from \"".concat(collectionName, "\" collection in \"").concat(databaseName, "\" database"));
+                    db = mongoose_1.default.connection.db;
+                    if (!!db) return [3 /*break*/, 2];
+                    console.log('Database connection not ready yet. Waiting for "connected" event...');
+                    return [4 /*yield*/, new Promise(function (resolve) { return mongoose_1.default.connection.once('connected', resolve); })];
+                case 1:
+                    _a.sent();
+                    _a.label = 2;
+                case 2: return [4 /*yield*/, db.collection(collectionName)
+                        .find()
+                        .sort({ id: 1 })
+                        .toArray()];
+                case 3:
+                    result = _a.sent();
+                    console.log("Got ".concat(result.length, " records"));
+                    return [2 /*return*/, result];
+            }
+        });
+    });
+}
+exports.getAllRecords = getAllRecords;
+// edit a todo item's todo field
+router.put('/edit/todo/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, todo, result, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                todo = req.body.todo;
+                if (typeof todo === 'undefined') {
+                    return [2 /*return*/, res.status(400).json({ error: 'todo req missing in request body' })];
+                }
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, SingeTodo_1.default.findOneAndUpdate({ id: id }, { $set: { todo: todo } }, { new: true })];
+            case 2:
+                result = _a.sent();
+                if (!result) {
+                    return [2 /*return*/, res.status(404).json({ message: "Todo item with ID ".concat(id, " not found") })];
+                }
+                return [2 /*return*/, res.status(200).json(result)];
+            case 3:
+                error_3 = _a.sent();
+                console.error(error_3);
+                return [2 /*return*/, res.status(500).json({ message: 'Server error' })];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+// Update a todo item's isDone field
+router.put('/update/isDone/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, isDone, result, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                isDone = req.body.isDone;
+                if (typeof isDone === 'undefined') {
+                    return [2 /*return*/, res.status(400).json({ error: 'isDone req missing in request body' })];
+                }
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, SingeTodo_1.default.findOneAndUpdate({ id: id }, { $set: { isDone: isDone } }, { new: true })];
+            case 2:
+                result = _a.sent();
+                if (!result) {
+                    return [2 /*return*/, res.status(404).json({ message: "Todo item with ID ".concat(id, " not found") })];
+                }
+                return [2 /*return*/, res.status(200).json(result)];
+            case 3:
+                error_4 = _a.sent();
+                console.error(error_4);
+                return [2 /*return*/, res.status(500).json({ message: 'Server error' })];
+            case 4: return [2 /*return*/];
         }
     });
 }); });

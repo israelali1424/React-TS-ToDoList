@@ -1,5 +1,5 @@
 import express from 'express';
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import Router from './routes/routes';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -8,7 +8,7 @@ const port = process.env.PORT as string;
 const host = process.env.HOST as string;
 const app = express();
 app.use(express.json());
-//  setup for Cros for axios api request 
+//  setup for Cros for axios api request
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', host);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');

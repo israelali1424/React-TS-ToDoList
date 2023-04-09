@@ -49,6 +49,7 @@ var port = process.env.PORT;
 var host = process.env.HOST;
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
+//  setup for Cros for axios api request
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', host);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
