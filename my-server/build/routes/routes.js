@@ -111,7 +111,9 @@ router.delete('/delete/:id', function (req, res) { return __awaiter(void 0, void
             case 2:
                 result = _a.sent();
                 if (result.deletedCount === 1) {
-                    res.status(200).json({ message: "Todo item with ID ".concat(id, " deleted successfully") });
+                    res
+                        .status(200)
+                        .json({ message: "Todo item with ID ".concat(id, " deleted successfully") });
                 }
                 else {
                     res.status(404).json({ message: "Todo item with ID ".concat(id, " not found") });
@@ -137,11 +139,14 @@ function getAllRecords(databaseName, collectionName) {
                     db = mongoose_1.default.connection.db;
                     if (!!db) return [3 /*break*/, 2];
                     console.log('Database connection not ready yet. Waiting for "connected" event...');
-                    return [4 /*yield*/, new Promise(function (resolve) { return mongoose_1.default.connection.once('connected', resolve); })];
+                    return [4 /*yield*/, new Promise(function (resolve) {
+                            return mongoose_1.default.connection.once('connected', resolve);
+                        })];
                 case 1:
                     _a.sent();
                     _a.label = 2;
-                case 2: return [4 /*yield*/, db.collection(collectionName)
+                case 2: return [4 /*yield*/, db
+                        .collection(collectionName)
                         .find()
                         .sort({ id: 1 })
                         .toArray()];
@@ -172,7 +177,9 @@ router.put('/edit/todo/:id', function (req, res) { return __awaiter(void 0, void
             case 2:
                 result = _a.sent();
                 if (!result) {
-                    return [2 /*return*/, res.status(404).json({ message: "Todo item with ID ".concat(id, " not found") })];
+                    return [2 /*return*/, res
+                            .status(404)
+                            .json({ message: "Todo item with ID ".concat(id, " not found") })];
                 }
                 return [2 /*return*/, res.status(200).json(result)];
             case 3:
@@ -192,7 +199,9 @@ router.put('/update/isDone/:id', function (req, res) { return __awaiter(void 0, 
                 id = req.params.id;
                 isDone = req.body.isDone;
                 if (typeof isDone === 'undefined') {
-                    return [2 /*return*/, res.status(400).json({ error: 'isDone req missing in request body' })];
+                    return [2 /*return*/, res
+                            .status(400)
+                            .json({ error: 'isDone req missing in request body' })];
                 }
                 _a.label = 1;
             case 1:
@@ -201,7 +210,9 @@ router.put('/update/isDone/:id', function (req, res) { return __awaiter(void 0, 
             case 2:
                 result = _a.sent();
                 if (!result) {
-                    return [2 /*return*/, res.status(404).json({ message: "Todo item with ID ".concat(id, " not found") })];
+                    return [2 /*return*/, res
+                            .status(404)
+                            .json({ message: "Todo item with ID ".concat(id, " not found") })];
                 }
                 return [2 /*return*/, res.status(200).json(result)];
             case 3:

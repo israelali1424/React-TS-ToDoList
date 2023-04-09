@@ -3,6 +3,7 @@ import { Todo } from './model';
 import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import { MdDone } from 'react-icons/md';
 import './styles.css';
+import axios from 'axios';
 export interface Props {
   todo: Todo;
   todos: Todo[];
@@ -17,22 +18,68 @@ const SingleTodo = ({ todo, todos, setTodos }: Props) => {
   }, [edit]);
   // if the todo form the para matches the current todo set the done status
   // to the opposite of what was before else just return the todo
-  const handleDone = (id: number) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
-      )
-    );
+  const handleDone = async (id: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/update/isDone/${id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            isDone: !todos.find((todo) => todo.id === id)?.isDone,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update todo item');
+      }
+
+      setTodos(
+        todos.map((todo) =>
+          todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
+        )
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     setTodos(todos.filter((todo) => todo.id !== id));
-  };
-  const handleEdit = (e: React.FormEvent, id: number) => {
-    e.preventDefault();
-    setTodos(
-      todos.map((todo) => (todo.id === id ? { ...todo, todo: editTodo } : todo))
+    console.log(`http://localhost:5000/delete/${todo.id}`);
+    const response = await axios.delete(
+      `http://localhost:5000/delete/${todo.id}`
     );
-    setEdit(false);
+    console.log(response.data);
+  };
+
+  const handleEdit = async (e: React.FormEvent, id: number) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`http://localhost:5000/edit/todo/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          todo: editTodo,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update todo item');
+      }
+
+      setTodos(
+        todos.map((todo) =>
+          todo.id === id ? { ...todo, todo: editTodo } : todo
+        )
+      );
+      setEdit(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

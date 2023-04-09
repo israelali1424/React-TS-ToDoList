@@ -43,20 +43,15 @@ var express_1 = __importDefault(require("express"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var routes_1 = __importDefault(require("./routes/routes"));
 var dotenv_1 = __importDefault(require("dotenv"));
+var cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 var uri = process.env.ATLAS_URI;
 var port = process.env.PORT;
 var host = process.env.HOST;
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
-//  setup for Cros for axios api request
-app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', host);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    next();
-});
+//  setup for Cors for axios api request
+app.use((0, cors_1.default)()); // apply cors middleware to all routes
 app.use('/', routes_1.default);
 // Use mongoose to create a connection to the MongoDB Atlas cluster
 var connectToDatabase = function () { return __awaiter(void 0, void 0, void 0, function () {

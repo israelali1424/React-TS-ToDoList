@@ -49,7 +49,9 @@ router.delete('/delete/:id', async (req, res) => {
   try {
     const result = await SingleTodo.deleteOne({ id: id });
     if (result.deletedCount === 1) {
-      res.status(200).json({ message: `Todo item with ID ${id} deleted successfully` });
+      res
+        .status(200)
+        .json({ message: `Todo item with ID ${id} deleted successfully` });
     } else {
       res.status(404).json({ message: `Todo item with ID ${id} not found` });
     }
@@ -60,14 +62,24 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 // Define the getAllRecords function
-export async function getAllRecords(databaseName: string, collectionName: string) {
-  console.log(`Getting all records from "${collectionName}" collection in "${databaseName}" database`);
+export async function getAllRecords(
+  databaseName: string,
+  collectionName: string
+) {
+  console.log(
+    `Getting all records from "${collectionName}" collection in "${databaseName}" database`
+  );
   const db = mongoose.connection.db;
   if (!db) {
-    console.log('Database connection not ready yet. Waiting for "connected" event...');
-    await new Promise(resolve => mongoose.connection.once('connected', resolve));
+    console.log(
+      'Database connection not ready yet. Waiting for "connected" event...'
+    );
+    await new Promise((resolve) =>
+      mongoose.connection.once('connected', resolve)
+    );
   }
-  const result = await db.collection(collectionName)
+  const result = await db
+    .collection(collectionName)
     .find()
     .sort({ id: 1 })
     .toArray();
@@ -91,7 +103,9 @@ router.put('/edit/todo/:id', async (req, res) => {
     );
 
     if (!result) {
-      return res.status(404).json({ message: `Todo item with ID ${id} not found` });
+      return res
+        .status(404)
+        .json({ message: `Todo item with ID ${id} not found` });
     }
 
     return res.status(200).json(result);
@@ -107,7 +121,9 @@ router.put('/update/isDone/:id', async (req, res) => {
   const { isDone } = req.body;
 
   if (typeof isDone === 'undefined') {
-    return res.status(400).json({ error: 'isDone req missing in request body' });
+    return res
+      .status(400)
+      .json({ error: 'isDone req missing in request body' });
   }
   try {
     const result = await SingleTodo.findOneAndUpdate(
@@ -116,7 +132,9 @@ router.put('/update/isDone/:id', async (req, res) => {
       { new: true }
     );
     if (!result) {
-      return res.status(404).json({ message: `Todo item with ID ${id} not found` });
+      return res
+        .status(404)
+        .json({ message: `Todo item with ID ${id} not found` });
     }
 
     return res.status(200).json(result);

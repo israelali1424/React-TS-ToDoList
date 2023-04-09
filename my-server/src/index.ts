@@ -2,20 +2,16 @@ import express from 'express';
 import mongoose from 'mongoose';
 import Router from './routes/routes';
 import dotenv from 'dotenv';
+import cors from 'cors';
 dotenv.config();
 const uri = process.env.ATLAS_URI as string;
 const port = process.env.PORT as string;
 const host = process.env.HOST as string;
 const app = express();
 app.use(express.json());
-//  setup for Cros for axios api request
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', host);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
-});
+
+//  setup for Cors for axios api request
+app.use(cors()); // apply cors middleware to all routes
 
 app.use('/', Router);
 
